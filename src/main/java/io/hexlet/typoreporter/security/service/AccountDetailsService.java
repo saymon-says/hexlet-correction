@@ -1,4 +1,4 @@
-package io.hexlet.typoreporter.service.account;
+package io.hexlet.typoreporter.security.service;
 
 import io.hexlet.typoreporter.repository.AccountRepository;
 import lombok.AllArgsConstructor;

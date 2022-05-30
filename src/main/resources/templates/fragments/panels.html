@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <nav aria-label="Main navbar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" th:fragment="mainNavbarTop">
     <div class="container-fluid">
@@ -13,9 +13,17 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/create/workspace}">Create Workspace</a>
                 </li>
+                Logged user: <span sec:authentication="name">Bob</span>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <a href="#" th:href="@{/signin}" class="btn btn-outline-info" data-mdb-ripple-color="dark" role="button">Sign in</a>
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="#" th:href="@{/signin}" class="btn btn-outline-info" data-mdb-ripple-color="dark"
+                       role="button">Sign in</a>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <a href="#" th:href="@{/logout}" class="btn btn-outline-warning" data-mdb-ripple-color="dark"
+                       role="button">Logout</a>
+                </div>
             </ul>
         </div>
     </div>

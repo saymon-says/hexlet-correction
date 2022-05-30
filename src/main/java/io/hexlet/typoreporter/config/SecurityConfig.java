@@ -1,6 +1,7 @@
 package io.hexlet.typoreporter.config;
 
 import io.hexlet.typoreporter.security.filter.WorkspaceAuthTokenFilter;
+import io.hexlet.typoreporter.security.provider.AccountTokenAuthenticationProvider;
 import io.hexlet.typoreporter.security.provider.WorkspaceTokenAuthenticationProvider;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import static io.hexlet.typoreporter.web.Routers.Typo.TYPOS;
 import static io.hexlet.typoreporter.web.Routers.Workspace.API_WORKSPACES;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
@@ -30,6 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityProblemSupport problemSupport;
 
     private WorkspaceTokenAuthenticationProvider workspaceTokenAuthenticationProvider;
+
+    private AccountTokenAuthenticationProvider accountTokenAuthenticationProvider;
 
     @Bean
     public PasswordEncoder noOpPasswordEncoder() {
@@ -49,7 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(workspaceTokenAuthenticationProvider);
+        auth.authenticationProvider(workspaceTokenAuthenticationProvider)
+            .authenticationProvider(accountTokenAuthenticationProvider);
     }
 
     @Bean
@@ -68,7 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
             .mvcMatchers(POST, API_WORKSPACES + "/*" + TYPOS).authenticated()
-            .anyRequest().permitAll()
+            .antMatchers(GET , "/login", "/signup").permitAll()
+            .anyRequest().authenticated()
             .and()
             .csrf()
             .ignoringRequestMatchers(new AntPathRequestMatcher(API_WORKSPACES + "/*" + TYPOS, POST.name()));
